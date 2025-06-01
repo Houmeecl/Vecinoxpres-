@@ -1,0 +1,13 @@
+<html>
+  <body style="font-family: Arial; padding: 40px; border: 3px solid #0047AB;">
+    <h1 style="text-align:center; color:#0047AB;">Certificado de Residencia</h1>
+    <p>El/La señor(a) <strong>{{nombre}}</strong>, RUT <strong>{{rut}}</strong>, declara bajo juramento que reside en:</p>
+    <p><strong>{{direccion}}</strong>, comuna de <strong>{{comuna}}</strong>, región de <strong>{{region}}</strong>.</p>
+    <p>Fecha de emisión: <strong>{{fecha}}</strong></p>
+    <p style="text-align:right;">Firma Certificador:<br><br>__________________________<br>{{certificador}}</p>
+    <div style="text-align:center; margin-top:30px;">
+      <img src="{{qr_url}}" alt="QR de validación" width="180"><br>
+      <small>Validar: {{validacion_url}}</small>
+    </div>
+  </body>
+</html>
