@@ -1,11 +1,12 @@
+// index.js - Backend Express PDF + QR
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const pdf = require('html-pdf');
 const { v4: uuidv4 } = require('uuid');
 const bodyParser = require('body-parser');
-const app = express();
 
+const app = express();
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
@@ -46,4 +47,4 @@ app.get('/validar', (req, res) => {
     res.send(`<h2>Certificado válido</h2><p>Emitido a nombre de: <strong>${cert.nombre}</strong><br>Dirección: <strong>${cert.direccion}</strong><br>Certificador: ${cert.certificador}</p><a href="/${cert.archivo}" target="_blank">Ver PDF</a>`);
 });
 
-app.listen(5000, () => console.log("Servidor PDF escuchando en puerto 5000"));
+app.listen(5000, () => console.log("Servidor ejecutándose en puerto 5000"));
