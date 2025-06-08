@@ -8,7 +8,25 @@ const bodyParser = require('body-parser');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('public'));
+
+// Rutas de autenticación simples
+app.get('/vecinos/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
+app.post('/vecinos/login', (req, res) => {
+    const { usuario, contrasena } = req.body;
+    if (usuario === 'admin' && contrasena === '12345') {
+        return res.redirect('/vecinos/dashboard');
+    }
+    res.status(401).send('Credenciales inválidas');
+});
+
+app.get('/vecinos/dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+});
 
 app.post('/api/generar-certificado', (req, res) => {
     const data = req.body;
@@ -28,20 +46,24 @@ app.post('/api/generar-certificado', (req, res) => {
     const pdfPath = path.join(__dirname, 'public', `cert-${uuid}.pdf`);
     pdf.create(html).toFile(pdfPath, (err, result) => {
         if (err) return res.status(500).send('Error al generar PDF');
-        fs.appendFileSync(path.join(__dirname, 'public', 'certificados.json'), JSON.stringify({
-            id: uuid,
-            ...data,
-            archivo: `cert-${uuid}.pdf`
-        }) + ',
-');
+        fs.appendFileSync(
+            path.join(__dirname, 'public', 'certificados.json'),
+            JSON.stringify({
+                id: uuid,
+                ...data,
+                archivo: `cert-${uuid}.pdf`
+            }) + ',\n'
+        );
         res.json({ success: true, id: uuid, pdf: `/cert-${uuid}.pdf` });
     });
 });
 
 app.get('/validar', (req, res) => {
     const id = req.query.id;
-    const certs = fs.readFileSync(path.join(__dirname, 'public', 'certificados.json'), 'utf8').split(',
-').filter(Boolean);
+    const certs = fs
+        .readFileSync(path.join(__dirname, 'public', 'certificados.json'), 'utf8')
+        .split(',\n')
+        .filter(Boolean);
     const cert = certs.map(c => JSON.parse(c)).find(c => c.id === id);
     if (!cert) return res.send("Certificado no encontrado.");
     res.send(`<h2>Certificado válido</h2><p>Emitido a nombre de: <strong>${cert.nombre}</strong><br>Dirección: <strong>${cert.direccion}</strong><br>Certificador: ${cert.certificador}</p><a href="/${cert.archivo}" target="_blank">Ver PDF</a>`);
