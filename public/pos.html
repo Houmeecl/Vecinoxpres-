@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Activación POS</title>
+<style>
+body{font-family:Arial;margin:40px;}
+</style>
+</head>
+<body>
+<h1>Activar POS</h1>
+<form id="form">
+  <label>ID POS:<br><input type="text" id="id" /></label><br><br>
+  <label>Clave:<br><input type="password" id="clave" /></label><br><br>
+  <button type="submit">Activar</button>
+</form>
+<div id="msg"></div>
+<script>
+  const f = document.getElementById('form');
+  f.onsubmit = async e => {
+    e.preventDefault();
+    const res = await fetch('/api/activar-pos', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ id: document.getElementById('id').value, clave: document.getElementById('clave').value })
+    });
+    const d = await res.json();
+    document.getElementById('msg').innerText = d.ok ? 'POS Activado. QR:'+ d.qr : 'Error';
+  };
+</script>
+</body>
+</html>
